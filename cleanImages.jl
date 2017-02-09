@@ -37,13 +37,7 @@ for path in imgPaths
     data = reshape(data, (1, 1234322))
     println("Done appending to data\n")
 
-    println("Adding to dataframe...")
-    # push!(df, flatten)
-    println("Done adding to dataframe\n")
-    
     println("Writing out to csv...")
-    println(sizeof(data))
-    println(ndims(data))
     writecsv(output, data)
     println("Done writing\n")
 end
