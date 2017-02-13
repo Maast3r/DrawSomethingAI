@@ -40,6 +40,10 @@ for path in imgPaths
     println("Writing out to csv...")
     writecsv(output, data)
     println("Done writing\n")
+    count += 1
+    if count == 80
+        break
+    end
 end
 
 close(output)
@@ -47,3 +51,5 @@ close(output)
 println("********************************")
 println("DONE")
 println("********************************")
+
+# 61 839 458
