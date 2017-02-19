@@ -10,18 +10,18 @@ from mako import exceptions
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
-import numpy as np
-import tensorflow as tf
-
 import os, sys, time
+import subprocess
 
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True
-sess= tf.Session(config=config)
+# config = tf.ConfigProto()
+# config.gpu_options.allow_growth = True
+# sess= tf.Session(config=config)
 
-W = tf.Variable(tf.zeros([784, 10]), name="W")
-b = tf.Variable(tf.zeros([10]), name="b")
-y = tf.nn.softmax(tf.matmul(x, W) + b)
+
+# x = tf.placeholder("float", [None, 77841])
+# W = tf.Variable(tf.zeros([77841, 250]), name="W")
+# b = tf.Variable(tf.zeros([250]), name="b")
+# y = tf.nn.softmax(tf.matmul(x, W) + b)
 # saver = tf.train.Saver([W,b])
 # saver.restore(sess, "models/something")
 
@@ -40,12 +40,15 @@ class UploadHandler(tornado.web.RequestHandler):
     def post(self):
         file1 = self.request.files['file1'][0]
         original_fname = file1['filename']
+        label = original_fname.split(".")[0]
 
         output_file = open("uploads/" + original_fname, 'wb')
         output_file.write(file1['body'])
 
+        print(subprocess.check_output(['julia', 'classify_sketch.jl', 'uploads/'+original_fname, label]))
         # sess.run(y, feed_dict={x: input, keep_prob: 1.0}).flatten().tolist()
         self.finish("file " + original_fname + " is uploaded")
+
 
 def make_app():
     return tornado.web.Application([
@@ -53,8 +56,8 @@ def make_app():
         (r"/upload", UploadHandler),
         (r"/css/(.*)", tornado.web.StaticFileHandler,{'path': os.path.join(root, 'css')}),
 		(r"/js/(.*)", tornado.web.StaticFileHandler,{'path': os.path.join(root, 'js')}),
-		(r"/upload/(.*)", tornado.web.StaticFileHandler,{'path': os.path.join(root, 'js')}),
-		(r"/models/(.*)", tornado.web.StaticFileHandler,{'path': os.path.join(root, 'js')}),
+		(r"/upload/(.*)", tornado.web.StaticFileHandler,{'path': os.path.join(root, '.png')}),
+		(r"/models/(.*)", tornado.web.StaticFileHandler,{'path': os.path.join(root, '')}),
     ])
     
 def renderTemplate(templateName, **kwargs):
