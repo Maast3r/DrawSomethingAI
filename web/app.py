@@ -58,5 +58,6 @@ def renderTemplate(templateName, **kwargs):
 
 if __name__ == "__main__":
     app = make_app()
-    app.listen(80)
+    port = int(os.environ.get("PORT", 8888))
+    app.listen(port)
     tornado.ioloop.IOLoop.current().start()
