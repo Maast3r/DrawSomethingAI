@@ -13,18 +13,6 @@ from mako.lookup import TemplateLookup
 import os, sys, time
 import subprocess
 
-# config = tf.ConfigProto()
-# config.gpu_options.allow_growth = True
-# sess= tf.Session(config=config)
-
-
-# x = tf.placeholder("float", [None, 77841])
-# W = tf.Variable(tf.zeros([77841, 250]), name="W")
-# b = tf.Variable(tf.zeros([250]), name="b")
-# y = tf.nn.softmax(tf.matmul(x, W) + b)
-# saver = tf.train.Saver([W,b])
-# saver.restore(sess, "models/something")
-
 root = os.path.join(os.path.dirname(__file__), ".")
 lookup = TemplateLookup(directories=[os.path.join(root, 'views')],
 		input_encoding='utf-8',
@@ -45,9 +33,9 @@ class UploadHandler(tornado.web.RequestHandler):
         output_file = open("uploads/" + original_fname, 'wb')
         output_file.write(file1['body'])
 
-        print(subprocess.check_output(['julia', 'classify_sketch.jl', 'uploads/'+original_fname, label]))
-        # sess.run(y, feed_dict={x: input, keep_prob: 1.0}).flatten().tolist()
-        self.finish("file " + original_fname + " is uploaded")
+        what_it_thinks = subprocess.check_output(['julia', 'classify_sketch.jl', 'uploads/'+original_fname, label])
+
+        self.write("Is it a(n) " + what_it_thinks.decode())
 
 
 def make_app():
